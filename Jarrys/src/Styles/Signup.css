@@ -1,0 +1,73 @@
+.signup-container {
+    width: 100vw;
+    height: 100vh;
+    background-image: url("../assets/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    width: 400px; /* Slightly increased width */
+}
+
+input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 30px;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+button {
+    background-color: rgba(0, 72, 255, 0.865);
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: green;
+    color: white;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+}
+
+.redirect-link {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
+

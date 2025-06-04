@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import "../styles/Login.css";
+import "../Styles/Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");

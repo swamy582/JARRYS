@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import "../styles/Signup.css";
+import "../Styles/Signup.css";
 
 const Signup = () => {
   const [name, setName] = useState("");

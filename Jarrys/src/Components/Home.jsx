@@ -13,7 +13,7 @@ import {
   FaYoutube,
   FaWhatsapp
 } from "react-icons/fa";
-import "../styles/Home.css";
+import "../Styles/Home.css";
 import logo from "../assets/logo.png";
 import slider1 from "../assets/slider1.jpg";
 import slider2 from "../assets/slider2.jpg";

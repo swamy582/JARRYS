@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/Collections.css";
+import "../Styles/Collections.css";
 import men1 from "../assets/men1.jpg";
 import women1 from "../assets/women1.jpg";
 

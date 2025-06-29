@@ -7,26 +7,26 @@ import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
-// ✅ Environment variables
+// 🔐 Env Variables
 const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/Jarrys";
 const SESSION_SECRET = process.env.SESSION_SECRET || "dev_secret_key";
 
-// ✅ CORS Setup (local + deployed frontend)
+// 🌐 CORS Config
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://jarrys-frontend.onrender.com" // ✅ Your deployed frontend
+      "https://jarrys-frontend.onrender.com"
     ],
     credentials: true,
   })
 );
 
-// ✅ Body parser
+// 🔄 Body Parser
 app.use(express.json());
 
-// ✅ Session setup using MongoDB (connect-mongo)
+// 🧠 Sessions with MongoDB
 app.use(
   session({
     secret: SESSION_SECRET,
@@ -37,28 +37,28 @@ app.use(
       collectionName: "sessions",
     }),
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-      sameSite: "none",            // important for cross-origin cookie
-      secure: true,                // only over HTTPS (Render is HTTPS)
+      maxAge: 1000 * 60 * 60 * 24,
+      sameSite: "none",
+      secure: true,
     },
   })
 );
 
-// ✅ MongoDB connection
+// 🔌 Connect DB
 async function connectDB() {
   try {
     await mongoose.connect(MONGO_URI);
     console.log("✅ Connected to MongoDB");
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error);
+  } catch (err) {
+    console.error("❌ DB Error:", err.message);
     process.exit(1);
   }
 }
 connectDB();
 
-// ✅ Routes
+// 📦 Routes
 app.use("/auth", authRoutes);
 
-// ✅ Start server
+// 🚀 Start
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

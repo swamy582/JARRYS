@@ -19,9 +19,10 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await fetch("https://your-backend-name.onrender.com/auth/login", {
+      const res = await fetch("https://jarrys-backend.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // include cookies/session if needed
         body: JSON.stringify({ email, password }),
       });
 

@@ -4,38 +4,73 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
-// Signup
+// ✅ POST /auth/signup
 router.post("/signup", async (req, res) => {
-  const { name, email, password, phone } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const newUser = new User({ name, email, password: hashedPassword, phone });
-    await newUser.save();
-    req.session.user = newUser;
-    res.json({ message: "User registered successfully!" });
+    const { username, email, password, phone } = req.body;
+
+    // Validation
+    if (!username || !email || !password || !phone) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ error: "Email already registered" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save new user
+    const user = new User({ username, email, password: hashedPassword, phone });
+    await user.save();
+
+    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    res.status(400).json({ error: "User already exists!" });
+    console.error("Signup Error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// Login
+// ✅ POST /auth/login
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    const { email, password } = req.body;
 
-  if (!user) return res.status(400).json({ error: "User not found!" });
+    // Validate
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json({ error: "Invalid password!" });
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
-  req.session.user = user;
-  res.json({ message: "Login successful!", user });
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
+
+    // Save to session
+    req.session.user = { id: user._id, username: user.username, email: user.email };
+    res.status(200).json({ message: "Login successful", user: req.session.user });
+  } catch (err) {
+    console.error("Login Error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-// Logout
+// ✅ POST /auth/logout
 router.post("/logout", (req, res) => {
-  req.session.destroy();
-  res.json({ message: "Logged out successfully!" });
+  req.session.destroy(err => {
+    if (err) {
+      console.error("Logout Error:", err);
+      return res.status(500).json({ error: "Logout failed" });
+    }
+    res.clearCookie("connect.sid");
+    res.status(200).json({ message: "Logged out successfully" });
+  });
 });
 
 export default router;

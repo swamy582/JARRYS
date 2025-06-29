@@ -6,18 +6,22 @@ import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
-// Middleware
-app.use(express.json()); // To parse JSON data from requests
-
-// CORS Configuration
+// ✅ CORS Configuration (add your frontend URL here)
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"], // Allow multiple frontends
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://jarrys-frontend.onrender.com" // ✅ Replace with your real frontend URL
+    ],
     credentials: true,
   })
 );
 
-// Session Configuration
+// ✅ Body Parser
+app.use(express.json());
+
+// ✅ Session
 app.use(
   session({
     secret: "secret_key",
@@ -26,10 +30,10 @@ app.use(
   })
 );
 
-// MongoDB Connection
+// ✅ MongoDB Connection
 async function connectDB() {
   try {
-    await mongoose.connect("mongodb://localhost:27017/Jarrys");
+    await mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/Jarrys");
     console.log("✅ Connected to MongoDB");
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error);
@@ -38,9 +42,9 @@ async function connectDB() {
 }
 connectDB();
 
-// Routes
+// ✅ Routes
 app.use("/auth", authRoutes);
 
-// ✅ Start Server with dynamic port
+// ✅ Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

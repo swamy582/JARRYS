@@ -4,7 +4,7 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
-// POST /auth/signup
+// Signup
 router.post("/signup", async (req, res) => {
   const { username, email, password, phone } = req.body;
   if (!username || !email || !password || !phone) {
@@ -21,12 +21,12 @@ router.post("/signup", async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    console.error("Signup Error:", err);
+    console.error("Signup Error:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// POST /auth/login
+// Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: "Missing fields" });
@@ -46,16 +46,20 @@ router.post("/login", async (req, res) => {
 
     res.status(200).json({ message: "Login successful", user: req.session.user });
   } catch (err) {
-    console.error("Login Error:", err);
+    console.error("Login Error:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// POST /auth/logout
+// Logout
 router.post("/logout", (req, res) => {
   req.session.destroy(err => {
     if (err) return res.status(500).json({ error: "Logout failed" });
-    res.clearCookie("connect.sid");
+    res.clearCookie("connect.sid", {
+      path: "/",
+      sameSite: "none",
+      secure: true,
+    });
     res.status(200).json({ message: "Logged out successfully" });
   });
 });

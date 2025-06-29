@@ -28,18 +28,19 @@ app.use(
 
 // MongoDB Connection
 async function connectDB() {
-    try {
-      await mongoose.connect("mongodb://localhost:27017/Jarrys"); // Removed deprecated options
-      console.log("✅ Connected to MongoDB");
-    } catch (error) {
-      console.error("❌ MongoDB Connection Error:", error);
-      process.exit(1);
-    }
+  try {
+    await mongoose.connect("mongodb://localhost:27017/Jarrys");
+    console.log("✅ Connected to MongoDB");
+  } catch (error) {
+    console.error("❌ MongoDB Connection Error:", error);
+    process.exit(1);
   }
-  connectDB();
+}
+connectDB();
 
 // Routes
 app.use("/auth", authRoutes);
 
-// Start Server
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+// ✅ Start Server with dynamic port
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

@@ -18,15 +18,23 @@ const Login = () => {
 
     setError("");
 
-    const res = await fetch("http://localhost:5000/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("https://your-backend-name.onrender.com/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
-    if (res.ok) navigate("/home");
-    else setError(data.error);
+      const data = await res.json();
+
+      if (res.ok) {
+        navigate("/home");
+      } else {
+        setError(data.error || "Login failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Unable to connect to the server. Please try again later.");
+    }
   };
 
   return (
@@ -34,12 +42,14 @@ const Login = () => {
       <div className="login-box">
         <h2>Welcome back</h2>
         {error && <p className="error-message">{error}</p>}
+
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <div className="password-container">
           <input
             type={showPassword ? "text" : "password"}
@@ -51,7 +61,9 @@ const Login = () => {
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </span>
         </div>
+
         <button onClick={handleLogin}>Sign in</button>
+
         <p>
           Don't have an account?{" "}
           <span onClick={() => navigate("/signup")} className="redirect-link">

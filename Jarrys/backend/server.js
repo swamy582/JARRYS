@@ -3,30 +3,29 @@ import session from "express-session";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import cors from "cors";
+import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
+
+dotenv.config(); // Load .env
 
 const app = express();
 
-// 🔐 Env Variables
-const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/Jarrys";
-const SESSION_SECRET = process.env.SESSION_SECRET || "dev_secret_key";
+// 🔐 Configs
+const MONGO_URI = process.env.MONGODB_URI;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
-// 🌐 CORS Config
+// 🌐 CORS
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "https://jarrys-frontend.onrender.com"
-    ],
+    origin: [CLIENT_URL, "https://jarrys-frontend.onrender.com"],
     credentials: true,
   })
 );
 
-// 🔄 Body Parser
 app.use(express.json());
 
-// 🧠 Sessions with MongoDB
+// 🧠 Sessions
 app.use(
   session({
     secret: SESSION_SECRET,
@@ -38,27 +37,27 @@ app.use(
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
-      sameSite: "none",
-      secure: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
     },
   })
 );
 
-// 🔌 Connect DB
-async function connectDB() {
+// 🔌 MongoDB Connection
+const connectDB = async () => {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("✅ Connected to MongoDB");
+    console.log("✅ Connected to MongoDB Atlas");
   } catch (err) {
-    console.error("❌ DB Error:", err.message);
+    console.error("❌ MongoDB Error:", err.message);
     process.exit(1);
   }
-}
+};
 connectDB();
 
-// 📦 Routes
 app.use("/auth", authRoutes);
 
-// 🚀 Start
+// 🚀 Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
